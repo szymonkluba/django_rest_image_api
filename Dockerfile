@@ -5,5 +5,5 @@ WORKDIR /code
 COPY requirements.txt /code/
 RUN pip install -r requirements.txt
 COPY image_api /code/
-RUN chmod 775 ./scripts/wait-for-it.sh
-RUN chmod 775 ./scripts/django_setup.sh
+RUN chmod a+x ./scripts/wait-for-it.sh
+RUN chmod a+x ./scripts/django_setup.sh
