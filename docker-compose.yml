@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+  web:
+    build: .
+    env_file:
+      - variables.env
+    command: ./scripts/wait-for-it.sh db:5432 --timeout=120 --strict --  ./scripts/django_setup.sh
+    # command: ./scripts/wait-for-it.sh db:5432 --timeout=120 --strict -- bash -c "python manage.py migrate && python manage.py createsuperuser --noinput && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./image_api:/code/
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+  memcached:
+    container_name: memcached
+    image: memcached:latest
+    ports:
+      - "11211:11211"

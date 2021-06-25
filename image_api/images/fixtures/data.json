@@ -1,0 +1,66 @@
+[
+  {
+    "model": "images.plan",
+    "pk": 1,
+    "fields": {
+      "name": "Basic"
+    }
+  },
+  {
+    "model": "images.plan",
+    "pk": 2,
+    "fields": {
+      "name": "Premium",
+      "link_to_original": true
+    }
+  },
+  {
+    "model": "images.plan",
+    "pk": 3,
+    "fields": {
+      "name": "Enterprise",
+      "link_to_original": true,
+      "expiring_link": true
+    }
+  },
+  {
+    "model": "images.planthumbnailsetting",
+    "pk": 1,
+    "fields": {
+      "plan": 1,
+      "thumbnail_size": 200
+    }
+  },
+  {
+    "model": "images.planthumbnailsetting",
+    "pk": 2,
+    "fields": {
+      "plan": 2,
+      "thumbnail_size": 200
+    }
+  },
+  {
+    "model": "images.planthumbnailsetting",
+    "pk": 3,
+    "fields": {
+      "plan": 2,
+      "thumbnail_size": 400
+    }
+  },
+  {
+    "model": "images.planthumbnailsetting",
+    "pk": 4,
+    "fields": {
+      "plan": 3,
+      "thumbnail_size": 200
+    }
+  },
+  {
+    "model": "images.planthumbnailsetting",
+    "pk": 5,
+    "fields": {
+      "plan": 3,
+      "thumbnail_size": 400
+    }
+  }
+]
