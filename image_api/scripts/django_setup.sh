@@ -1,5 +1,5 @@
 #!/bin/bash
-sleep 10
+sleep 5
 echo "Applying migrations"
 python manage.py migrate
 echo "Creating superuser"
