@@ -13,7 +13,7 @@ services:
     build: .
     env_file:
       - variables.env
-    command: ["code/scripts/wait-for-it.sh", "db:5432", "--timeout=120", "--strict", "--", "code/scripts/django_setup.sh"]
+    command: ["./scripts/wait-for-it.sh", "db:5432", "--timeout=120", "--strict", "--", "./scripts/django_setup.sh"]
     volumes:
       - ./image_api:/code/
     ports:
