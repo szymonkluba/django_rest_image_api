@@ -2,6 +2,8 @@ from django.core import signing
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.signing import SignatureExpired
 from django.db.models import Min
+from django.http import HttpRequest
+from django.urls import reverse
 from rest_framework import serializers
 from sorl.thumbnail import get_thumbnail
 
@@ -38,6 +40,7 @@ class ImageDetailsSerializer(serializers.ModelSerializer):
     Image details serializer - images/<str:pk>
     Return image details and hyperlinks to views with thumbnail or original image links - depends on user's plan settings
     """
+
     class Meta:
         model = models.ImageProduct
         fields = ["url", "uuid", "links"]
@@ -127,10 +130,8 @@ class LinkSerializer(serializers.ModelSerializer):
         # Check if token exists and return link or None if doesn't exist
         if not expiring_token:
             return
-
-        if request.is_secure():
-            return f"https://{request.get_host()}/temp?token={expiring_token.token}"
-        return f"http://{request.get_host()}/temp?token={expiring_token.token}"
+        location = reverse("temporary-link")
+        return request.build_absolute_uri(location=location + f"?token={expiring_token.token}")
 
     def get_generator_link(self, obj):
         # Get link to expiring link generation view if user can generate expiring links
@@ -173,6 +174,7 @@ class ExpiringTokenSerializer(serializers.ModelSerializer):
 
     Accepts "duration" value through POST request and generates expiring token for given image
     """
+
     class Meta:
         model = models.ExpiringToken
         fields = ["duration"]
