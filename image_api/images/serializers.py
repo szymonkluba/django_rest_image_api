@@ -26,7 +26,6 @@ def get_url_with_query_params(request, location, **kwargs):
     http(s)://host/location/?query_param1=value1&query_param2=value2&...
     """
     url = request.build_absolute_uri(location)
-    print(kwargs)
     if kwargs:
         url += "?"
     for key, value in kwargs.items():
