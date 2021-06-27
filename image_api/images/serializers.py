@@ -15,6 +15,16 @@ def get_data(request):
     return str(request.query_params.get("size", "original"))
 
 
+def get_url_with_query_params(request, location, **kwargs):
+    url = request.build_absolute_uri(location)
+    print(kwargs)
+    if kwargs:
+        url += "?"
+    for key, value in kwargs.items():
+        url += f"{key}={value}"
+    return url
+
+
 class ImageProductSerializer(serializers.ModelSerializer):
     """
     Image serializer - images/
@@ -49,18 +59,22 @@ class ImageDetailsSerializer(serializers.ModelSerializer):
 
     def get_links(self, obj):
         links = {}
+        print(obj.uuid)
         request = self.context.get("request")
         plan_settings = request.user.user_tier.plan
         thumbnail_settings = plan_settings.thumbnail_settings.all()
 
         # Get links to thumbnails details
         for setting in thumbnail_settings:
-            links[f"thumbnail_{setting.thumbnail_size}px"] = request.build_absolute_uri(
-                request.path + f'/link?size={setting.thumbnail_size}')
+            location = reverse("image-link", kwargs={"pk": obj.uuid})
+            links[f"thumbnail_{setting.thumbnail_size}px"] = get_url_with_query_params(request,
+                                                                                       location,
+                                                                                       size=setting.thumbnail_size)
 
         # Get links to original details
         if plan_settings.link_to_original:
-            links["original"] = request.build_absolute_uri(request.path + "/link")
+            location = reverse("image-link", kwargs={"pk": obj.uuid})
+            links["original"] = request.build_absolute_uri(location)
 
         return links
 
@@ -131,13 +145,17 @@ class LinkSerializer(serializers.ModelSerializer):
         if not expiring_token:
             return
         location = reverse("temporary-link")
-        return request.build_absolute_uri(location=location + f"?token={expiring_token.token}")
+        return get_url_with_query_params(request, location, token=expiring_token.token)
 
     def get_generator_link(self, obj):
         # Get link to expiring link generation view if user can generate expiring links
         request = self.context.get("request")
         if request.user.user_tier.plan.expiring_link:
-            return request.build_absolute_uri(request.path.replace("link", "get-temporary"))
+            location = reverse("image-expiring-link", kwargs={"pk": obj.uuid})
+            size = request.query_params.get("size", None)
+            if size:
+                return get_url_with_query_params(request, location, size=size)
+            return request.build_absolute_uri(location)
         return
 
     @staticmethod
